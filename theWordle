@@ -1,0 +1,181 @@
+package WordleGame;
+import java.util.Scanner;
+
+public class theWordle {
+	
+	// Wordle Game by Rohan Patel
+	// Adv. CS
+
+	private final int COLUMNS = 5, ROWS = 6;
+
+	private int numGuesses = 0, numGuessesLeft = 6;
+	
+	private String[] wordList = {"alone", "agent", "alude", "broke", "binge", "baggy", "crane", "crack", "civil"
+			, "dread", "dairy", "dozen", "email", "equal", "ethos", "fiend", "fifth", "flash", "glare", "glass", 
+			"green", "honey", "house", "humid", "icing", "inert", "jewel", "judge", "kayak", "limbo", "laugh", 
+			"medal", "motel", "nerdy", "offer", "patio", "quota", "retry", "realm", "sandy", "salon", "teeth", 
+			"broke", "binge", "baggy", "crane", "crack", "civil", "tread", "uncle", "valid", "wheel", "yield", "zebra"};
+	
+	
+	//the symbolArray displays the symbols (*,@,X) depending on if the character is in the word
+	//the guessArray is the user's guesses displayed next to the symbolArray
+	private String[] symbolArray = {"-----", "-----", "-----", "-----", "-----", "-----"};
+	private String[] guessArray = {"-----", "-----", "-----", "-----", "-----", "-----"};
+	private char[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+
+	private String userGuess = "", theWord = "", playAgain = "";
+
+	private boolean win = false, lose = false;
+
+	private Scanner input = new Scanner(System.in);
+
+	private void begin() {
+		//the game begins by selecting a random five letter word from the wordList above
+		theWord = wordList[(int) (Math.random()*wordList.length)];
+		
+		//Greetings!
+		System.out.println("Welcome to Wordle!");
+		System.out.println();
+		
+		System.out.println("The rules are simple. Take a guess. The asterisk (*) mean the letter is in the correct position, "
+				+ "the at sign (@) means the letter is in the word but not in the correct positon, and the X means the letter"
+				+ " is not in the word.");
+		System.out.println();
+		
+	}
+
+
+
+	private void checkGuess() {
+		//this method checks the user guess
+		//runs until the game is won or lost
+
+		while(win == false && lose == false) {
+			//the user guesses here
+			System.out.println();
+			userGuess = input.next();
+			System.out.println();
+			
+			//guess has to be five characters otherwise it runs the method again
+			if (userGuess.length()!= 5) {
+				System.out.println("Your guess needs to be five characters long. Try again.");
+				printReturn();
+			}
+			//this statement checks the individual characters of the guess and assigns it a symbol
+			else {
+				userGuess = userGuess.toLowerCase();
+				guessArray[numGuesses] = userGuess;
+
+				String symbol = "";
+				boolean temp = false;
+				//puts a hash # for used letters 
+				for(int i = 0; i < userGuess.length(); i++) {
+					for(int j = 0; j < alphabet.length; j++) {
+						if (userGuess.charAt(i) == alphabet[j]) {
+							alphabet[j] = '#';
+						}
+					}
+				}
+				for(int i = 0; i < COLUMNS; i++) {
+					for(int j = 0; j < COLUMNS; j++) {
+						if(userGuess.charAt(i) == theWord.charAt(j)) {
+							if(i == j) {
+								//since the character is in the right spot, it gets a *
+								symbol  += "*";
+								temp = true;
+							}
+							else {
+								//since the character is in the word, it gets a @
+								symbol  += "@";
+								temp = true;
+							}
+						}
+					}
+					if(temp == false) {
+						//its not in the word, it gets a X
+						symbol  += "X";
+					}
+					temp = false;
+				}
+				//adds it to the array
+				symbolArray[numGuesses] = symbol;
+				numGuesses++;
+				printReturn();
+			}
+			
+			
+			//if you win by guessing the word, you go to the win method
+			if(userGuess.equals(theWord)) {
+				win = true;
+				win();
+			}
+			//if you lose by running out of guesses, you go to the lose method
+			if(numGuesses == 6) {
+				lose = true;
+				lose();
+			}
+
+		}
+
+	}
+
+	public void printReturn() {
+		//after the guess is checked, the info is printed for the user to read
+		for(int i = 0; i < ROWS; i++) {
+			System.out.print(symbolArray[i]);
+			System.out.print(" ");
+			System.out.print(guessArray[i]);
+			System.out.println();
+		}
+
+		for(int i = 0; i < alphabet.length; i++) {
+			System.out.print(alphabet[i]);
+			System.out.print(" ");
+		}
+		
+
+	}
+
+
+	public void win() {
+		//Congrats! you won
+		System.out.println();
+		
+		if(numGuesses == 0) {
+			System.out.println("Whew! That was close!");
+		}
+		else if(numGuesses == 5){
+			System.out.println("You did it! And you still had 1 guess left!");
+		}
+		else {
+			System.out.println("You did it! And you still had " + (6-numGuesses) + " guesses left!");
+		}
+
+	}
+
+
+
+	public void lose() {
+		//oh no! you lost
+		System.out.println();
+		System.out.println("You lost. You ran out of guesses.");
+	}
+
+	public static void main(String[] args) {
+
+		theWordle runner = new theWordle();
+
+		runner.begin();
+		
+		runner.printReturn();
+		
+		runner.checkGuess();
+
+	}
+	
+	//thanks for playing my game
+
+
+
+
+
